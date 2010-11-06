@@ -14,12 +14,19 @@ namespace Aont
     {
 
 
-        public MyForm()
+        public MyForm(string[] args)
         {
             InitializeComponent();
 
-            MyButton.Initialize(this.panel1, 4,4);
-
+            if (args.Length == 1)
+            {
+                MyButton.Initialize(this.panel1, args[0]);
+            }
+            else
+            {
+                MyButton.Initialize(this.panel1, 4, 4);
+            }
+     
         }
 
         private void startSToolStripMenuItem_Click(object sender, EventArgs e)
@@ -78,6 +85,9 @@ namespace Aont
         {
             MessageBox.Show("Where to save the PNG Save Data.");
         }
+
+
+
 
     }
 }

@@ -20,13 +20,13 @@ namespace Aont
 
             ParentControl.SuspendLayout();
 
-            
+
             for (int i = 0; i < Row; i++)
             {
                 for (int j = 0; j < Column; j++)
                 {
                     var button = Buttons[i, j];
-                    if(button.Clicked == (bmp.GetPixel(j,i).GetBrightness() >0.5f ))
+                    if (button.Clicked == (bmp.GetPixel(j, i).GetBrightness() > 0.5f))
                         button.OnClick(null);
 
                 }
@@ -48,7 +48,7 @@ namespace Aont
                         bmp.SetPixel(j, i, Color.White);
                 }
             }
-            
+
             return bmp;
 
         }
@@ -102,10 +102,52 @@ namespace Aont
             this.Appearance = Appearance.Button;
             this.Margin = new Padding(0);
             this.TextAlign = ContentAlignment.MiddleCenter;
+            //this.TabStop = false;
+        }
+        protected override bool IsInputKey(Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Down:
+                case Keys.Right:
+                case Keys.Up:
+                case Keys.Left:
+                    break;
+                default:
+                    return base.IsInputKey(keyData);
+                    //break;
+            }
+            return true;
+        }
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Up:
+                    if (i > 0)
+                        Buttons[i - 1, j].Focus();
+                    break;
+                case Keys.Down:
+                    if (i < Row - 1)
+                        Buttons[i + 1, j].Focus();
+                    break;
+                case Keys.Left:
+                    if (j > 0)
+                        Buttons[i, j-1].Focus();
+                    break;
+                case Keys.Right:
+                    if (j < Column-1)
+                        Buttons[i,j +1].Focus();
+                    break;
+                default:
+                    break;
+            }
 
+            base.OnKeyDown(e);
         }
         protected override void OnClick(EventArgs e)
         {
+
             if (i > 0)
             {
                 Buttons[i - 1, j].Invert();
@@ -153,8 +195,13 @@ namespace Aont
         {
             ImComplete = true;
             ParentControl = parentControl;
-            ReStart(row,column);
-
+            ReStart(row, column);
+        }
+        public static void Initialize(Control parentControl, string image)
+        {
+            ImComplete = true;
+            ParentControl = parentControl;
+            Load(new Bitmap(image));
         }
         public static void ReStart(int row, int column)
         {
@@ -193,6 +240,14 @@ namespace Aont
             }
             ParentControl.ResumeLayout(false);
         }
+
+        /*
+        protected override void OnMouseEnter(EventArgs eventargs)
+        {
+            base.OnMouseEnter(eventargs);
+            this.Focus();
+        }
+        */
 
 
     }
