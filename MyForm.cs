@@ -17,7 +17,7 @@ namespace Aont
         {
             InitializeComponent();
 
-            MyButton.Initialize(this.panel1, 4);
+            MyButton.Initialize(this.panel1, 4,4);
 
         }
 
@@ -44,34 +44,14 @@ namespace Aont
         }
 
 
-
-        private void toolStripComboBox1_KeyDown(object sender, KeyEventArgs e)
+        private void changeSizeSToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            SizeDialogue sd = new SizeDialogue();
+
+            if (sd.ShowDialog() == DialogResult.OK)
             {
-                int num = 0;
-                try
-                {
-                    num = int.Parse(toolStripComboBox1.Text);
-                }
-                catch
-                {
-                    MessageBox.Show("Not A Number!");
-                    return;
-                }
-                if (num > 2)
-                {
-                    MyButton.ReStart(num);
-
-                }
-                else
-                {
-                    MessageBox.Show("Input a number larger than or equal to 3");
-                }
+                MyButton.ReStart(sd.row,sd.column);
             }
-
-
-
         }
     }
 }
