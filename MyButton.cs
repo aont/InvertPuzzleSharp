@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Aont
 {
@@ -12,6 +13,45 @@ namespace Aont
         const string NULL = null;
         static string CheckText = "✓";
         static bool ImComplete = true;
+        public static void Load(Bitmap bmp)
+        {
+            ImComplete = true;
+            ReStart(bmp.Height, bmp.Width);
+
+            ParentControl.SuspendLayout();
+
+            
+            for (int i = 0; i < Row; i++)
+            {
+                for (int j = 0; j < Column; j++)
+                {
+                    var button = Buttons[i, j];
+                    if(button.Clicked == (bmp.GetPixel(j,i).GetBrightness() >0.5f ))
+                        button.OnClick(null);
+
+                }
+            }
+
+            ParentControl.ResumeLayout(false);
+
+        }
+        public static Bitmap Save()
+        {
+            Bitmap bmp = new Bitmap(Column, Row);
+
+            for (int i = 0; i < Row; i++)
+            {
+                for (int j = 0; j < Column; j++)
+                {
+                    var button = Buttons[i, j];
+                    if (!button.Clicked)
+                        bmp.SetPixel(j, i, Color.White);
+                }
+            }
+            
+            return bmp;
+
+        }
         public static bool ClickedCheck
         {
             get { return _ClickedCheck; }
@@ -19,9 +59,9 @@ namespace Aont
             {
                 if (_ClickedCheck = value)
                 {
-                    for (int i = 0; i < row; i++)
+                    for (int i = 0; i < Row; i++)
                     {
-                        for (int j = 0; j < column; j++)
+                        for (int j = 0; j < Column; j++)
                         {
                             var button = Buttons[i, j];
                             if (button.Clicked)
@@ -33,9 +73,9 @@ namespace Aont
                 }
                 else
                 {
-                    for (int i = 0; i < row; i++)
+                    for (int i = 0; i < Row; i++)
                     {
-                        for (int j = 0; j < column; j++)
+                        for (int j = 0; j < Column; j++)
                         {
                             Buttons[i, j].Text = NULL;
                         }
@@ -46,7 +86,7 @@ namespace Aont
         }
         private static bool _ClickedCheck = false;
         static MyButton[,] Buttons;
-      public  static int row, column;
+        public static int Row, Column;
         static Control ParentControl;
         bool Clicked = false;
 
@@ -70,7 +110,7 @@ namespace Aont
             {
                 Buttons[i - 1, j].Invert();
             }
-            if (i < row - 1)
+            if (i < Row - 1)
             {
                 Buttons[i + 1, j].Invert();
             }
@@ -78,7 +118,7 @@ namespace Aont
             {
                 Buttons[i, j - 1].Invert();
             }
-            if (j < column - 1)
+            if (j < Column - 1)
             {
                 Buttons[i, j + 1].Invert();
             }
@@ -94,9 +134,9 @@ namespace Aont
         }
         bool CompleteCheck()
         {
-            for (int i = 0; i < row; i++)
+            for (int i = 0; i < Row; i++)
             {
-                for (int j = 0; j < column; j++)
+                for (int j = 0; j < Column; j++)
                 {
                     if (!Buttons[i, j].Checked)
                         return false;
@@ -113,35 +153,37 @@ namespace Aont
         {
             ImComplete = true;
             ParentControl = parentControl;
-            MyButton.row = row;
-            MyButton.column = column;
+            ReStart(row,column);
+
+        }
+        public static void ReStart(int row, int column)
+        {
+            ImComplete = true;
+            ParentControl.SuspendLayout();
+            ParentControl.Controls.Clear();
+            MyButton.Row = row;
+            MyButton.Column = column;
             Buttons = new MyButton[row, column];
-            parentControl.SuspendLayout();
+            ParentControl.SuspendLayout();
             for (int i = 0; i < row; i++)
             {
                 for (int j = 0; j < column; j++)
                 {
                     var button = Buttons[i, j] = new MyButton(i, j);
 
-                    parentControl.Controls.Add(button);
+                    ParentControl.Controls.Add(button);
                 }
             }
-            parentControl.Size = new Size(column * 32, row * 32);
-            parentControl.ResumeLayout(false);
-        }
-        public static void ReStart(int row, int column)
-        {
-            ParentControl.SuspendLayout();
-            ParentControl.Controls.Clear();
-            Initialize(ParentControl, row, column);
+            ParentControl.Size = new Size(column * 32, row * 32);
+            ParentControl.ResumeLayout(false);
         }
         public static void ReStart()
         {
             ImComplete = true;
             ParentControl.SuspendLayout();
-            for (int i = 0; i < row; i++)
+            for (int i = 0; i < Row; i++)
             {
-                for (int j = 0; j < column; j++)
+                for (int j = 0; j < Column; j++)
                 {
                     var button = Buttons[i, j];
                     button.Clicked = false;

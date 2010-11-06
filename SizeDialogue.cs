@@ -10,11 +10,13 @@ namespace Aont
 {
     public partial class SizeDialogue : Form
     {
-   
+
         public int row, column;
         public SizeDialogue()
         {
             InitializeComponent();
+            comboBox1.Text = (row = MyButton.Row).ToString();
+            comboBox2.Text = (column = MyButton.Column).ToString();
         }
 
         private void comboBox1_TextChanged(object sender, EventArgs e)
@@ -24,15 +26,17 @@ namespace Aont
                 row = int.Parse(comboBox1.Text);
                 if (row < 1)
                     throw new Exception();
+                if (checkBox1.Checked)
+                    column = row;
             }
             catch
             {
                 MessageBox.Show("Row must be a Natural Number.", "FormatException!");
-                comboBox1.Text = "3";
+                comboBox1.Text = (row = MyButton.Row).ToString();
+                if (checkBox1.Checked)
+                    column = row;
             }
 
-            if (checkBox1.Checked)
-                comboBox2.Text = comboBox1.Text;
         }
 
         private void comboBox2_TextChanged(object sender, EventArgs e)
@@ -46,15 +50,29 @@ namespace Aont
             catch
             {
                 MessageBox.Show("Column must be A Natural Number.", "FormatException!");
-                comboBox2.Text = "3";
+                comboBox2.Text = (column = MyButton.Column).ToString();
             }
 
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
             if (checkBox1.Checked)
-                comboBox1.Text = comboBox2.Text;
+            {
+                label2.Text = "Size";
+                label3.Visible = false;
+                comboBox2.Visible = false;
+            }
+            else
+            {
+                label2.Text = "Row";
+                label3.Visible = true;
+                comboBox2.Visible = true;
+            }
         }
 
 
-        
+
 
     }
 }
